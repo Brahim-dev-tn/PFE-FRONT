@@ -16,21 +16,7 @@ pipeline {
             }
         }
 
-        stage('Install Node.js and Build') {
-            steps {
-                sh '''
-                    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
-                    export NVM_DIR="$HOME/.nvm"
-                    [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-                    nvm install 14
-                    nvm alias default 14
-                    node -v
-                    npm -v
-                    npm install -g @angular/cli@12.0.5
-                    npm install
-                    ng build
-                '''
-            }
+        
         }
 
         stage('Build Docker Image') {
