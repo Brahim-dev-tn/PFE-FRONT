@@ -9,13 +9,6 @@ pipeline {
         DOCKER_IMAGE_VERSION = "${DOCKER_IMAGE_VERSION}"
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
