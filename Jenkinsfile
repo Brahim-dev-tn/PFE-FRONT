@@ -11,6 +11,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Build the Docker image
                     sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ."
                 }
             }
@@ -18,24 +19,25 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Build the Docker image
-                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ."
                     // Log in and push to Docker Hub using hardcoded credentials
                     sh "docker login -u ${DOCKER_HUB_USERNAME} -p Lifeisgoodbrahim@@"
                     sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
                     sh "docker push ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
-                    }
                 }
             }
         }
         stage('Remove Docker Compose Containers') {
             steps {
-                sh 'docker-compose down'
+                script {
+                    sh 'docker-compose down'
+                }
             }
         }
         stage('Start Docker Compose') {
             steps {
-                sh 'docker-compose up -d'
+                script {
+                    sh 'docker-compose up -d'
+                }
             }
         }
     }
