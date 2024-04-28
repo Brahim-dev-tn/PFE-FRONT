@@ -9,17 +9,6 @@ pipeline {
 
     }
 
-    tools {
-        git '/usr/bin/git'  // Ensure this path is correct and corresponds to your Jenkins configuration
-    }
-
-    stages {
-        stage('Clone Repository') {
-            steps {
-                git url: 'https://github.com/YourRepositoryURL', branch: 'main'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
