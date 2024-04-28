@@ -5,10 +5,10 @@ pipeline {
         DOCKER_IMAGE_NAME = 'app-front'
         DOCKER_IMAGE_VERSION = '1.0.0'
         DOCKER_HUB_USERNAME = 'brahimbenyouns@gmail.com' 
-        DOCKER_HUB_CREDENTIALS_ID = 'Lifeisgoodbrahim@@' 
-
+        DOCKER_HUB_CREDENTIALS_ID = 'Lifeisgoodbrahim@@' // This should be an ID from the Jenkins credentials store, not a password directly
     }
 
+    stages {
         stage('Build Docker Image') {
             steps {
                 script {
@@ -28,16 +28,15 @@ pipeline {
                 }
             }
         }
-
         stage('Remove Docker Compose Containers') {
             steps {
                 sh 'docker-compose down'
             }
         }
-
         stage('Start Docker Compose') {
             steps {
                 sh 'docker-compose up -d'
             }
         }
     }
+}
