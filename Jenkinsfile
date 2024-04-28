@@ -1,13 +1,24 @@
-def DOCKER_IMAGE_NAME = "app-front"
-def DOCKER_IMAGE_VERSION = "1.0.0"
-
 pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE_NAME = "${DOCKER_IMAGE_NAME}"
-        DOCKER_IMAGE_VERSION = "${DOCKER_IMAGE_VERSION}"
+        DOCKER_IMAGE_NAME = 'app-front'
+        DOCKER_IMAGE_VERSION = '1.0.0'
+        DOCKER_HUB_USERNAME = 'brahimbenyouns@gmail.com' 
+        DOCKER_HUB_CREDENTIALS_ID = 'Lifeisgoodbrahim@@' 
+
     }
+
+    tools {
+        git '/usr/bin/git'  // Ensure this path is correct and corresponds to your Jenkins configuration
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git url: 'https://github.com/YourRepositoryURL', branch: 'main'
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
@@ -19,14 +30,15 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    sh "docker login -u brahimbenyouns@gmail.com -p Lifeisgoodbrahim@@"
-                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} \$DOCKER_HUB_USERNAME/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
-                    sh "docker push \$DOCKER_HUB_USERNAME/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
-
+                    // Use Jenkins credentials to login to Docker Hub securely
+                    withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
+                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
+                        sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
+                        sh "docker push ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
+                    }
                 }
             }
         }
-
 
         stage('Remove Docker Compose Containers') {
             steps {
