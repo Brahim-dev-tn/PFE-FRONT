@@ -5,7 +5,6 @@ pipeline {
         DOCKER_IMAGE_NAME = 'app-front'
         DOCKER_IMAGE_VERSION = '1.0.0'
         DOCKER_HUB_USERNAME = 'brahimbenyouns@gmail.com' 
-        DOCKER_HUB_CREDENTIALS_ID = 'Lifeisgoodbrahim@@' // This should be an ID from the Jenkins credentials store, not a password directly
     }
 
     stages {
@@ -19,11 +18,12 @@ pipeline {
         stage('Push Docker Image to Docker Hub') {
             steps {
                 script {
-                    // Use Jenkins credentials to login to Docker Hub securely
-                    withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS_ID, passwordVariable: 'DOCKER_PASSWORD', usernameVariable: 'DOCKER_USERNAME')]) {
-                        sh "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                        sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
-                        sh "docker push ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
+                    // Build the Docker image
+                    sh "docker build -t ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ."
+                    // Log in and push to Docker Hub using hardcoded credentials
+                    sh "docker login -u ${DOCKER_HUB_USERNAME} -p Lifeisgoodbrahim@@"
+                    sh "docker tag ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION} ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
+                    sh "docker push ${DOCKER_HUB_USERNAME}/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_VERSION}"
                     }
                 }
             }
