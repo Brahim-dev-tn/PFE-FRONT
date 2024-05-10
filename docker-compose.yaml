@@ -1,6 +1,7 @@
 version: '3'
 services:
   angular-app:
+    container_name: app-front 
     build:
       context: .
       dockerfile: Dockerfile
